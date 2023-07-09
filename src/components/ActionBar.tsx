@@ -33,7 +33,6 @@ export const ActionBar = (props: {className: string}) => {
         <div className={props.className}>
             <ActionButton onClick={() => download(state)} icon={faDownload} tooltip="Save Json" />
             <ActionButton onClick={() => addTileWithTextures()} icon={faLayerGroup} tooltip="Add selected textures as one tile" />
-            <ActionButton onClick={() => {}} icon={faTableCellsLarge} tooltip="Add N tiles constrained based off selection. All texture selections must be touching." />
             <DangerButton onClick={() => dispatch(clearTiles())} icon={faEraser} tooltip="Remove all tiles" />
             <DangerButton onClick={() => dispatch(reset())} icon={faTrash} tooltip="Reset the project" />
         </div>

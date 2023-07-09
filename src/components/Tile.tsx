@@ -12,10 +12,11 @@ export const Tile = (props: {tileDef: TileDef, texture: string}) => {
 
     let selectedClass = tileUnderEdit === props.tileDef.tileId ? SELECTION_STYLE : ''
 
+    console.log(props.tileDef)
     const backgroundCss = props.tileDef.textures.length == 0 ? {} : generateBackgroundStyleForTile(props.tileDef.textures[0], props.texture)
     const isAnimated = props.tileDef.tileType === "ANIMATED"
     const textureElement = isAnimated
-        ? <AnimatedTexture image={props.texture} textures={props.tileDef.textures} className={selectedClass} />
+        ? <AnimatedTexture textures={props.tileDef.textures} className={selectedClass} />
         : <div style={backgroundCss} className={"w-[16px] h-[16px] " + selectedClass}/>
     return (
         <div className={'inline-block m-2 cursor-pointer'} onClick={() => {

@@ -27,30 +27,35 @@ export const TileTextureSelector = (props: {className: string}) => {
     )
 
     const tiles = []
-    const texture = tilesheet.textures[0] || ""
-    const dim = getPngDimensions(texture) || {width: 0, height: 0}
-    for (let y = 0; y < Math.floor(dim.height/16); y++) {
-        for (let x = 0; x < Math.floor(dim.width/16); x++) {
-            tiles.push(<TileSelector key={`${x}_${y}`}
-                                     x={x}
-                                     y={y}
-                                     spritesheet64={texture}
-                                     selected={tilesheet.selectedTextures && tilesheet.selectedTextures.some((it) => it.row == x && it.column == y)}
-                                     onclick={(e) => {
-                                         if (e.ctrlKey) {
-                                             dispatch(selectTextures([...tilesheet.selectedTextures, {sheetId: 0, row: x, column: y}]))
-                                         } else {
-                                             dispatch(selectTextures([{sheetId: 0, row: x, column: y}]))
-                                         }
-
-                                     }}
-                />
-            )
+    for (const textureIdx_ in tilesheet.textures) {
+        const textureIdx = Number(textureIdx_)
+        const texture = tilesheet.textures[textureIdx]
+        const dim = getPngDimensions(texture) || {width: 0, height: 0}
+        for (let y = 0; y < Math.floor(dim.height/16); y++) {
+            for (let x = 0; x < Math.floor(dim.width/16); x++) {
+                tiles.push(<TileSelector key={`${textureIdx}_${x}_${y}`}
+                                         x={x}
+                                         y={y}
+                                         textureId={textureIdx}
+                                         selected={tilesheet.selectedTextures && tilesheet.selectedTextures.some((it) => it.row == x && it.column == y && it.sheetId == textureIdx)}
+                                         onclick={(e) => {
+                                             if (e.ctrlKey || e.metaKey) {
+                                                 dispatch(selectTextures([...tilesheet.selectedTextures, {sheetId: textureIdx, row: x, column: y}]))
+                                             } else {
+                                                 dispatch(selectTextures([{sheetId: textureIdx, row: x, column: y}]))
+                                             }
+    
+                                         }}
+                    />
+                )
+            }
         }
+    
     }
 
+ 
     const widthStyle = {
-        width: (tiles.length == 0) ? 300 : dim.width,
+        width: 300
     }
     return (
         <div className={props.className}>
@@ -65,12 +70,13 @@ export const TileTextureSelector = (props: {className: string}) => {
 }
 
 const TileSelector = (props: TextureData & {selected: boolean, onclick: (e: MouseEvent) => void}) => {
+    const textures = useSelector((state: TilesetState) => state.textures)
     const [, drag] = useDrag(() => ({
         type: DragTypes.Texture,
-        item: { x: props.x, y: props.y, spritesheet64: props.spritesheet64 },
+        item: { x: props.x, y: props.y, textureId: props.textureId },
     }))
 
-    const style = generateBackgroundStyleForTileTd(props)
+    const style = generateBackgroundStyleForTileTd(props, textures[props.textureId])
     if (props.selected) {
         return (
             <div ref={drag} style={style} className={'w-4 h-4 inline-block ' + SELECTION_STYLE} onClick={(e) => props.onclick(e)}/>

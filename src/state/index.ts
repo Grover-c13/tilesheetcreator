@@ -1,10 +1,10 @@
 import {configureStore, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {SheetPos, TileDef} from "../model/TileDef";
+import {SheetTexturePosition, TileDef} from "../model/TileDef";
 import {loadState, saveState} from "./persist";
 
 
 export interface TilesetState {
-    selectedTextures: SheetPos[],
+    selectedTextures: SheetTexturePosition[],
     tileSelectedId: string,
     textures: string[],
     nextTileId: number,
@@ -53,10 +53,10 @@ export const tileset = createSlice({
         reset: () => {
             return blankState
         },
-        updateTexture: (state, action: PayloadAction<{tileId: string, textureId: number, texture: SheetPos}>) => {
+        updateTexture: (state, action: PayloadAction<{tileId: string, textureId: number, texture: SheetTexturePosition}>) => {
             state.tiles[action.payload.tileId].textures[action.payload.textureId] = action.payload.texture
         },
-        selectTextures: (state, action: PayloadAction<SheetPos[]>) => {
+        selectTextures: (state, action: PayloadAction<SheetTexturePosition[]>) => {
             state.selectedTextures = action.payload
         }
     },

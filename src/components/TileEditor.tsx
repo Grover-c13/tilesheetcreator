@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteTile, TilesetState, updateTexture, updateTile} from "../state";
-import {RandomTileDef, SheetPos, TileDef, TileType} from "../model/TileDef";
+import {RandomTileDef, SheetTexturePosition, TileDef, TileType} from "../model/TileDef";
 import {useDrop} from "react-dnd";
 import {DragTypes, TextureData} from "../CommonTypes";
 import {generateBackgroundStyleForTile} from "../utils";
@@ -53,7 +53,7 @@ export const TileEditor = () => {
             </div>
             <br />
             <div>
-                <TextureAdder texture={state.textures[0]} />
+                <TextureAdder />
             </div>
 
             <br />
@@ -64,12 +64,12 @@ export const TileEditor = () => {
     )
 }
 
-export const TextureAdder = (props: {texture: string}) => {
+export const TextureAdder = () => {
     const dispatch = useDispatch()
     const state = useSelector((state: TilesetState) => state)
     const tile = state.tiles[state.tileSelectedId]
     const [selected, setSelected] = useState<number>(undefined)
-    const updateTextures = (textures: SheetPos[]) => {
+    const updateTextures = (textures: SheetTexturePosition[]) => {
         dispatch(
             updateTile({...tile, textures: textures})
         )
@@ -77,7 +77,7 @@ export const TextureAdder = (props: {texture: string}) => {
 
     const [, drop] = useDrop(() => ({
         accept: DragTypes.Texture,
-        drop: (e: TextureData) => updateTextures([...tile.textures, {sheetId: 0, row: e.x, column: e.y}]),
+        drop: (e: TextureData) => updateTextures([...tile.textures, {sheetId: e.textureId, row: e.x, column: e.y}]),
         collect: (monitor) => ({
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
@@ -90,7 +90,7 @@ export const TextureAdder = (props: {texture: string}) => {
         return <div
             onClick={() => setSelected(parseInt(key))}
             key={`${tile.tileId}-${key}`}
-            style={generateBackgroundStyleForTile(it, props.texture)}
+            style={generateBackgroundStyleForTile(it, state.textures[it.sheetId])}
             className={"cursor-pointer w-[16px] h-[16px] inline-block " + extraClass}
         />
     });
@@ -143,7 +143,7 @@ export const TextureAdder = (props: {texture: string}) => {
                     <div className={"text-sm"}>Texture Weight</div>
                     <div>
                         <input className={INPUT_STYLE} type="number" value={textureAsRandom.weight || 1} onChange={(e) => {
-                            const newTexture = {...textureAsRandom, weight: parseInt(e.target.value)} as SheetPos
+                            const newTexture = {...textureAsRandom, weight: parseInt(e.target.value)} as SheetTexturePosition
                             dispatch(updateTexture({tileId: tile.tileId, textureId: selected, texture: newTexture}))
                         }}/>
                     </div>
@@ -157,7 +157,7 @@ export const TextureAdder = (props: {texture: string}) => {
                     <hr className={"mt-2"}/>
                     <div>Texture Settings - Animated</div>
                     <div className={"text-sm"}>Animation Preview</div>
-                    <AnimatedTexture image={props.texture} textures={tile.textures} className={""}/>
+                    <AnimatedTexture textures={tile.textures} className={""}/>
                     <hr className={"mt-2"}/>
                 </div>
             }
@@ -169,6 +169,6 @@ function getSummedWeights(tile: TileDef) {
     if (tile.tileType !== "RANDOM") return 0
     const def = tile as RandomTileDef
     return def.textures
-        .map(it => (it as SheetPos & {weight: number}).weight || 1)
+        .map(it => (it as SheetTexturePosition & {weight: number}).weight || 1)
         .reduce((a, b) => a+b)
 }

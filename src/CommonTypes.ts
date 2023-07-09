@@ -3,4 +3,4 @@ export const DragTypes = {
 }
 
 
-export interface TextureData { x: number, y: number, spritesheet64: string }
+export interface TextureData { x: number, y: number, textureId: number }

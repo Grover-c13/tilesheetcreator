@@ -1,10 +1,14 @@
 import React, {useEffect, useState} from "react";
 import {generateBackgroundStyleForTile} from "../utils";
-import {SheetPos} from "../model/TileDef";
+import {SheetTexturePosition} from "../model/TileDef";
+import { useSelector } from "react-redux";
+import { TilesetState } from "../state";
 
 const TICK_FRAME_EVERY_X_MS = 60;
 
-export function AnimatedTexture(props: {image: string, textures: SheetPos[], className: string}) {
+export function AnimatedTexture(props: { textures: SheetTexturePosition[], className: string}) {
+    const sheetTextures = useSelector((state: TilesetState) => state.textures)
+
     const [frame, setFrame] = useState(0)
     useEffect(() => {
         let reqId: number;
@@ -29,7 +33,7 @@ export function AnimatedTexture(props: {image: string, textures: SheetPos[], cla
         return () => cancelAnimationFrame(reqId);
     }, [frame, props.textures])
 
-    const backgroundCss = props.textures.length === 0 ? {} : generateBackgroundStyleForTile(props.textures[frame], props.image)
+    const backgroundCss = props.textures.length === 0 ? {} : generateBackgroundStyleForTile(props.textures[frame], sheetTextures[props.textures[frame].sheetId])
     return (
         <div style={backgroundCss} className={"w-[16px] h-[16px] " + props.className}/>
     );

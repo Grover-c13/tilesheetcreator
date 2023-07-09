@@ -19,7 +19,7 @@ export const TileGrid = () => {
                 name: id,
                 tileType: "STATIC",
                 textures: [
-                    {sheetId: 0, row: e.x, column: e.y}
+                    {sheetId: e.textureId, row: e.x, column: e.y}
                 ]
             }))
         },
@@ -29,7 +29,7 @@ export const TileGrid = () => {
         }),
     }), [tilesheet])
 
-    const mappedTiles = Object.values(tilesheet.tiles).map(it => <Tile key={it.tileId} texture={tilesheet.textures[0]} tileDef={it} />);
+    const mappedTiles = Object.values(tilesheet.tiles).map(it => <Tile key={it.tileId} texture={tilesheet.textures[it.textures[0].sheetId]} tileDef={it} />);
     return (
         <div className={"h-full w-full bg-[url('/static/tile-bg.png')] justify-center"} ref={drop}>
             {mappedTiles}

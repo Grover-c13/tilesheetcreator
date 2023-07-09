@@ -1,17 +1,17 @@
 import {TextureData} from "./CommonTypes";
-import {SheetPos} from "./model/TileDef";
+import {SheetTexturePosition} from "./model/TileDef";
 
-export function generateBackgroundStyleForTileTd(td: TextureData) {
+export function generateBackgroundStyleForTileTd(td: TextureData, imgBase64: string) {
     return {
-        backgroundImage: `url(${td.spritesheet64})`,
+        backgroundImage: `url(${imgBase64})`,
         backgroundPositionX: -td.x * 16,
         backgroundPositionY: -td.y * 16,
     }
 }
 
-export function generateBackgroundStyleForTile(td: SheetPos, texture: string) {
+export function generateBackgroundStyleForTile(td: SheetTexturePosition, imgBase64: string) {
     return {
-        backgroundImage: `url(${texture})`,
+        backgroundImage: `url(${imgBase64})`,
         backgroundPositionX: -td.row * 16,
         backgroundPositionY: -td.column * 16,
     }

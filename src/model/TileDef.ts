@@ -2,14 +2,13 @@ export type TileType = 'ANIMATED' | 'STATIC' | 'RANDOM' | 'STATEFUL';
 export type TileDef = {
     tileId: string,
     name: string,
-    textures: SheetPos[]
+    textures: SheetTexturePosition[]
     tileType: TileType
-
 }
 
 export type StatefulTileDef = TileDef & {
     tileType: 'STATEFUL'
-    textures: (SheetPos & {state: string})[]
+    textures: (SheetTexturePosition & {state: string})[]
 }
 
 export type AnimatedTileDef = TileDef & {
@@ -19,11 +18,11 @@ export type AnimatedTileDef = TileDef & {
 
 export type RandomTileDef = TileDef & {
     tileType: 'RANDOM',
-    textures: (SheetPos & {weight: number})[]
+    textures: (SheetTexturePosition & {weight: number})[]
 }
 
 
-export type SheetPos = {
+export type SheetTexturePosition = {
     sheetId: number,
     row: number,
     column: number
