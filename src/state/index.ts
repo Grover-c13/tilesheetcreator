@@ -28,6 +28,9 @@ export const tileset = createSlice({
     name: 'tileset',
     initialState,
     reducers: {
+        importState: (state, action: PayloadAction<TilesetState>) => {
+            return action.payload
+        },
         addTileDef: (state, action: PayloadAction<TileDef>) => {
             state.tiles = {...state.tiles, [action.payload.tileId]: action.payload}
             state.nextTileId += 1
@@ -70,4 +73,4 @@ store.subscribe(() => {
     saveState(store.getState());
 });
 
-export const { deleteTile, addTileDef, addTexture, setTileForEdit, updateTile, clearTiles, reset, updateTexture, selectTextures } = tileset.actions
+export const { deleteTile, addTileDef, addTexture, setTileForEdit, updateTile, clearTiles, reset, updateTexture, selectTextures, importState } = tileset.actions

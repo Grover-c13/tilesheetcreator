@@ -8,7 +8,7 @@ import {
     faLayerGroup,
     IconDefinition,
     faTrash,
-    faTableCellsLarge
+    faUpload
 } from '@fortawesome/free-solid-svg-icons'
 
 
@@ -31,7 +31,7 @@ export const ActionBar = (props: {className: string}) => {
 
     return (
         <div className={props.className}>
-            <ActionButton onClick={() => download(state)} icon={faDownload} tooltip="Save Json" />
+            <IoButton onClick={() => download(state)} icon={faDownload} tooltip="Export Json" />
             <ActionButton onClick={() => addTileWithTextures()} icon={faLayerGroup} tooltip="Add selected textures as one tile" />
             <DangerButton onClick={() => dispatch(clearTiles())} icon={faEraser} tooltip="Remove all tiles" />
             <DangerButton onClick={() => dispatch(reset())} icon={faTrash} tooltip="Reset the project" />
@@ -46,6 +46,19 @@ function download(state: TilesetState) {
     anchorEleement.setAttribute("download", "tileset.json");
     anchorEleement.click();
     anchorEleement.remove();
+}
+
+
+export const IoButton = (props: {onClick: () => void, icon: IconDefinition, tooltip: string}) => {
+    return (
+        <button
+            className={"bg-green-500 hover:bg-green-700 text-white font-bold border border-green-700 rounded block p-2 mb-2 w-10 h-10"}
+            onClick={() => props.onClick()}
+            title={props.tooltip}
+        >
+            <FontAwesomeIcon icon={props.icon} />
+        </button>
+    )
 }
 
 export const ActionButton = (props: {onClick: () => void, icon: IconDefinition, tooltip: string}) => {
