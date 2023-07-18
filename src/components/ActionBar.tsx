@@ -40,7 +40,7 @@ export const ActionBar = (props: {className: string}) => {
 }
 
 function download(state: TilesetState) {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
     const anchorEleement = document.createElement('a');
     anchorEleement.setAttribute("href", dataStr);
     anchorEleement.setAttribute("download", "tileset.json");
