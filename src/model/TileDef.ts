@@ -27,3 +27,11 @@ export type SheetTexturePosition = {
     row: number,
     column: number
 }
+
+export type TilePlacementConstraint = {
+    sourceTileId: string,
+    constraintTileId: string,
+    relativeX: number,
+    relativeY: number,
+    relativeLayer: number
+}

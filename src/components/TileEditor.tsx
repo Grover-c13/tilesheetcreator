@@ -9,6 +9,7 @@ import {DangerButton, SmallActionButton, SmallDangerButton} from "./ActionBar";
 import {faChevronLeft, faChevronRight, faRotate, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {INPUT_STYLE, SELECTION_STYLE} from "./styles";
 import {AnimatedTexture} from "./AnimatedTexture";
+import { TileContraintEditor } from "./TileConstraintEditor";
 
 
 export const TileEditor = () => {
@@ -58,7 +59,7 @@ export const TileEditor = () => {
 
             <br />
             <div>
-                <DangerButton onClick={() => dispatch(deleteTile(tileUnderEdit))} icon={faTrash} tooltip={"Remove TIle"}/>
+                <DangerButton onClick={() => dispatch(deleteTile(tileUnderEdit))} icon={faTrash} tooltip={"Remove Tile"}/>
             </div>
         </div>
     )
@@ -158,9 +159,11 @@ export const TextureAdder = () => {
                     <div>Texture Settings - Animated</div>
                     <div className={"text-sm"}>Animation Preview</div>
                     <AnimatedTexture textures={tile.textures} className={""}/>
-                    <hr className={"mt-2"}/>
+
                 </div>
             }
+            <hr className={"mt-2"}/>
+            <TileContraintEditor tile={tile} />
         </>
     )
 }

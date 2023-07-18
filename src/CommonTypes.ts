@@ -1,5 +1,6 @@
 export const DragTypes = {
     Texture: 'texture',
+    Tile: 'tile'
 }
 
 

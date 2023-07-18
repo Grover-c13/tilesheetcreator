@@ -1,6 +1,7 @@
 import {configureStore, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {SheetTexturePosition, TileDef} from "../model/TileDef";
+import {SheetTexturePosition, TileDef, TilePlacementConstraint} from "../model/TileDef";
 import {loadState, saveState} from "./persist";
+import { Texture } from "pixi.js";
 
 
 export interface TilesetState {
@@ -9,6 +10,7 @@ export interface TilesetState {
     textures: string[],
     nextTileId: number,
     tiles: { [key: string]: TileDef }
+    constraints: TilePlacementConstraint[]
 }
 
 const blankState: TilesetState = {
@@ -17,6 +19,7 @@ const blankState: TilesetState = {
     textures: [],
     nextTileId: 1,
     tiles: {},
+    constraints: []
 }
 
 const initialState: TilesetState = {
@@ -28,6 +31,27 @@ export const tileset = createSlice({
     name: 'tileset',
     initialState,
     reducers: {
+        addConstraint: (state, action: PayloadAction<TilePlacementConstraint>) => {
+            state.constraints = [...state.constraints, action.payload]
+        },
+        removeConstraint: (state, action: PayloadAction<TilePlacementConstraint>) => {
+            let filtered = false
+            state.constraints = [...state.constraints.filter(c => {
+                // c is proxied, so need to check directly
+                const areSame = action.payload.constraintTileId === c.constraintTileId &&
+                action.payload.relativeX === c.relativeX &&
+                action.payload.relativeY === c.relativeY &&
+                action.payload.relativeLayer === c.relativeLayer &&
+                action.payload.sourceTileId === c.sourceTileId;
+                
+                if (!filtered && areSame) {
+                    filtered = true
+                    return false
+                }
+
+                return true
+            })]
+        },
         importState: (state, action: PayloadAction<TilesetState>) => {
             return action.payload
         },
@@ -52,6 +76,7 @@ export const tileset = createSlice({
             state.tiles = {}
             state.tileSelectedId = undefined
             state.nextTileId = 1
+            state.constraints = []
         },
         reset: () => {
             return blankState
@@ -73,4 +98,4 @@ store.subscribe(() => {
     saveState(store.getState());
 });
 
-export const { deleteTile, addTileDef, addTexture, setTileForEdit, updateTile, clearTiles, reset, updateTexture, selectTextures, importState } = tileset.actions
+export const { deleteTile, addTileDef, addTexture, setTileForEdit, updateTile, clearTiles, reset, updateTexture, selectTextures, importState, addConstraint, removeConstraint} = tileset.actions
