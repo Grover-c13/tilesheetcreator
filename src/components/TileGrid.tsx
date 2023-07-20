@@ -29,7 +29,7 @@ export const TileGrid = () => {
         }),
     }), [tilesheet])
 
-    const mappedTiles = Object.values(tilesheet.tiles).map(it => <Tile key={it.tileId} tileDef={it} ignoreSelection={false} displayTileId={true} />);
+    const mappedTiles = Object.values(tilesheet.tiles).map(it => <Tile key={it.tileId} tileDef={it} hideSelection={false} displayTileId={true} />);
     return (
         <div className={"h-full w-full bg-[url('/static/tile-bg.png')] justify-center"} ref={drop}>
             {mappedTiles}

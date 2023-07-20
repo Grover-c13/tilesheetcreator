@@ -34,7 +34,7 @@ export const TileContraintEditor = ({tile}: {tile: TileDef}) => {
             <div className={"flex flex-col"}>
                 {constraints.map(c => <div className={"flex flex-row justify-between items-baseline"}>
                     <div>
-                        <Tile tileDef={tilesheet[c.constraintTileId]} ignoreSelection={false} displayTileId={false} />
+                        <Tile tileDef={tilesheet[c.constraintTileId]} hideSelection={true} displayTileId={false} />
                         <span>{c.constraintTileId}</span>
                     </div>
                     <span>{mapPositionToLabel({x: c.relativeX, y: c.relativeY, layer: c.relativeLayer})}</span>
