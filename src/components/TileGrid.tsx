@@ -19,7 +19,7 @@ export const TileGrid = () => {
                 name: id,
                 tileType: "STATIC",
                 textures: [
-                    {sheetId: e.textureId, row: e.x, column: e.y}
+                    {sheetId: e.textureId, col: e.x, row: e.y}
                 ]
             }))
         },

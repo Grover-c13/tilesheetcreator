@@ -2,7 +2,7 @@ import React, {MouseEvent} from "react";
 import {useDrag, useDrop} from "react-dnd";
 import {DragTypes, TextureData} from "../CommonTypes";
 import {NativeTypes} from "react-dnd-html5-backend";
-import {generateBackgroundStyleForTileTd, getPngDimensions} from "../utils";
+import {areSheetPosEquals, generateBackgroundStyleForTileTd, getPngDimensions} from "../utils";
 import {useDispatch, useSelector} from "react-redux";
 import {addTexture, selectTextures, TilesetState} from "../state";
 import {SELECTION_STYLE} from "./styles";
@@ -45,12 +45,18 @@ export const TileTextureSelector = (props: {className: string}) => {
                                             x={x}
                                             y={y}
                                             textureId={textureIdx}
-                                            selected={tilesheet.selectedTextures && tilesheet.selectedTextures.some((it) => it.row == x && it.column == y && it.sheetId == textureIdx)}
+                                            selected={tilesheet.selectedTextures && tilesheet.selectedTextures.some((it) => it.col == x && it.row == y && it.sheetId == textureIdx)}
                                             onclick={(e) => {
+                                                const pos = {sheetId: textureIdx, col: x, row: y}
                                                 if (e.ctrlKey || e.metaKey) {
-                                                    dispatch(selectTextures([...tilesheet.selectedTextures, {sheetId: textureIdx, row: x, column: y}]))
+                                                    if (tilesheet.selectedTextures.filter(p => areSheetPosEquals(p, pos)).length == 0) {
+                                                        dispatch(selectTextures([...tilesheet.selectedTextures, {sheetId: textureIdx, col: x, row: y}]))
+                                                    } else {
+                                                        dispatch(selectTextures([...tilesheet.selectedTextures.filter(p => !areSheetPosEquals(p, pos))]))
+                                                    }
+                  
                                                 } else {
-                                                    dispatch(selectTextures([{sheetId: textureIdx, row: x, column: y}]))
+                                                    dispatch(selectTextures([{sheetId: textureIdx, col: x, row: y}]))
                                                 }
         
                                             }}

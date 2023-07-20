@@ -24,8 +24,8 @@ export type RandomTileDef = TileDef & {
 
 export type SheetTexturePosition = {
     sheetId: number,
-    row: number,
-    column: number
+    col: number,
+    row: number
 }
 
 export type TilePlacementConstraint = {

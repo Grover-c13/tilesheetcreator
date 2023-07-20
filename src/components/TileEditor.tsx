@@ -78,7 +78,7 @@ export const TextureAdder = () => {
 
     const [, drop] = useDrop(() => ({
         accept: DragTypes.Texture,
-        drop: (e: TextureData) => updateTextures([...tile.textures, {sheetId: e.textureId, row: e.x, column: e.y}]),
+        drop: (e: TextureData) => updateTextures([...tile.textures, {sheetId: e.textureId, col: e.x, row: e.y}]),
         collect: (monitor) => ({
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),

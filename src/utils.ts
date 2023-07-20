@@ -12,8 +12,8 @@ export function generateBackgroundStyleForTileTd(td: TextureData, imgBase64: str
 export function generateBackgroundStyleForTile(td: SheetTexturePosition, imgBase64: string) {
     return {
         backgroundImage: `url(${imgBase64})`,
-        backgroundPositionX: -td.row * 16,
-        backgroundPositionY: -td.column * 16,
+        backgroundPositionX: -td.col * 16,
+        backgroundPositionY: -td.row * 16,
     }
 }
 
@@ -28,4 +28,8 @@ export function getPngDimensions(img: string) {
         width: dataView.getInt32(0),
         height: dataView.getInt32(4)
     }
+}
+
+export function areSheetPosEquals(a: SheetTexturePosition, b: SheetTexturePosition) {
+    return a.row === b.row && a.col === b.col && a.sheetId === b.sheetId;
 }
