@@ -9,6 +9,7 @@ import {Provider, useDispatch} from "react-redux";
 import {TilesetState, importState, store} from "./state";
 import {TileEditor} from "./components/TileEditor";
 import {ActionBar} from "./components/ActionBar";
+import { WaveFunctionPreview } from './components/WaveFunctionPreview';
 
 const GlobalDrop = (props: { children: JSX.Element }) => {
     const dispatch = useDispatch()
@@ -47,6 +48,7 @@ function App() {
                         <ActionBar className="h-full bg-gray-100 p-2"></ActionBar>
                         <div className="h-full">
                             <TileGrid />
+                            <WaveFunctionPreview />
                         </div>
                         <TileEditor />
                     </div>

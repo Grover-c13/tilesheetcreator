@@ -1,7 +1,6 @@
 import {configureStore, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {SheetTexturePosition, TileDef, TilePlacementConstraint} from "../model/TileDef";
 import {loadState, saveState} from "./persist";
-import { Texture } from "pixi.js";
 
 
 export interface TilesetState {
