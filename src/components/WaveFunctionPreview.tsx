@@ -8,25 +8,25 @@ import { generate } from "../wfc/generate";
 export const WaveFunctionPreview = () => {
     const tilesheet = useSelector((state: TilesetState) => state)
     const [getMap, setMap] = useState<string[][][]>([])
-    useEffect(() => {
-        const gen = generate(tilesheet, 8, 8)
-        setMap(gen)
-        console.log(gen)
-    }, [tilesheet])
-
 
     return (
-        <div className={"h-1/2 w-full bg-black justify-center"}>
-            {
-            getMap.map(x => {
-              return (
-                <div>
-                    {x.map(y => y.map(t => <TileTexture tileDef={tilesheet.tiles[t]} hideSelection={true} />))}
-                </div>
-              )    
-            })
-         }
-        </div>
+        <>
+        <button onClick={() => {
+            const gen = generate(tilesheet, 30, 30)
+            setMap(gen)
+        }}>Regen</button>
+            <div className={"h-1/2 w-full bg-black justify-center"} >
+                {
+                getMap.map(x => {
+                return (
+                    <div>
+                        {x.map(y => y.map(t => <TileTexture tileDef={tilesheet.tiles[t]} hideSelection={true} />))}
+                    </div>
+                )    
+                })
+            }
+            </div>
+        </>
     )
 }
 

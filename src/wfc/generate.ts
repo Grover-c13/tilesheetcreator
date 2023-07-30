@@ -5,6 +5,7 @@ import { TilesetState } from "../state";
 export function generate(tilesheet: TilesetState, width: number, height: number) {
     let tileLayer: string[][][] = []
     const banned: string[][][] = []
+    let firstPick = true;
 
     for (let row = 0; row < width; row++) {
         tileLayer[row] = []
@@ -17,10 +18,14 @@ export function generate(tilesheet: TilesetState, width: number, height: number)
     }
 
     const constraints = reflexConstraints(tilesheet.constraints)
+    const lookup = createConstraintLookup(constraints)
+
     while (!areAllAssigned(tileLayer)) {
-        const nextPos = findLowestConstraints(tileLayer)
+        const nextPos = firstPick ? {row: Math.floor(Math.random()*width), col: Math.floor(Math.random()*height)} : findLowestConstraints(tileLayer)
+        console.log(nextPos)
+        firstPick = false
         const assignment = selectValue(tileLayer[nextPos.row][nextPos.col], banned[nextPos.row][nextPos.col])
-        console.log("Assigning", nextPos, assignment, tileLayer)
+
         if (assignment === undefined) {
             return []
         }
@@ -30,7 +35,7 @@ export function generate(tilesheet: TilesetState, width: number, height: number)
         // if we run out of choices, restart
         let propagationStack = [{row: nextPos.row, col: nextPos.col, constraints: [assignment]}]
         while (propagationStack.length > 0) {
-            const current = propagationStack.shift()
+            const current = propagationStack.pop()
             if (!isPositionInBounds(tileLayer, current.row, current.col)) continue
 
             if (current.constraints.length === 0) {
@@ -40,13 +45,13 @@ export function generate(tilesheet: TilesetState, width: number, height: number)
                 tileLayer = beforePropState
             } else {
                 tileLayer[current.row][current.col] = current.constraints
-                const calc = calculateConstraintsAroundTile(current.constraints, constraints)
+                const calc = calculateConstraintsAroundTile(current.constraints, lookup)
 
                 const propagate = (dir: "top" | "bottom" | "left" | "right", rx: number, ry: number) => {
                     const currentConstraints = safeGet(tileLayer, current.row+ry, current.col+rx)
                     const newConstraints = intersect(calc[dir], currentConstraints)
                     
-                    if (!arraysEqual(currentConstraints, newConstraints) || newConstraints.length === 0) {
+                    if (!arraysEqual(currentConstraints, newConstraints)) {
                         propagationStack.push({row: current.row+ry, col: current.col+rx, constraints: newConstraints})
                     }
                 }
@@ -96,6 +101,7 @@ function findLowestConstraints(tilemap: string[][][]): {row: number, col: number
         }
     }
 
+
     return {row: Number(lowestRow), col: Number(lowestCol)}
 }
 
@@ -118,10 +124,10 @@ export type OutputConstraints = {
     right: string[]
 }
 
-function calculateConstraintsAroundTile(tileOptions: string[], constraints: TilePlacementConstraint[]): OutputConstraints {
+function calculateConstraintsAroundTile(tileOptions: string[], constraintLookup: { [key: string]: TilePlacementConstraint[] }): OutputConstraints {
     const getTileOptions = (tileId: string, x: number, y: number): string[] => {
         return [...
-            constraints
+            constraintLookup[tileId]
             .filter(c => c.sourceTileId === tileId && c.relativeX === x && c.relativeY === y)
             .map(c => c.constraintTileId)
         ]
@@ -137,7 +143,7 @@ function calculateConstraintsAroundTile(tileOptions: string[], constraints: Tile
 
 
 function intersect(...arrs: string[][]) {
-    return arrs.reduce((a, b) => a.filter(Set.prototype.has, new Set(b)));
+    return [...new Set(arrs.reduce((a, b) => a.filter(Set.prototype.has, new Set(b))))];
 }
 
 function union(...arrs: string[][]) {
@@ -173,4 +179,17 @@ function arraysEqual(a: string[], b: string[]) {
       if (a[i] !== b[i]) return false;
     }
     return true;
+  }
+
+  function createConstraintLookup(constraints: TilePlacementConstraint[]) {
+    const lookup: { [key: string]: TilePlacementConstraint[] } = {}
+    for (const c of constraints) {
+        if (!(c.sourceTileId in lookup)) {
+            lookup[c.sourceTileId] = []
+        }
+
+        lookup[c.sourceTileId].push(c)
+    }
+
+    return lookup
   }

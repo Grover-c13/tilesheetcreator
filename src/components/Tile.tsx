@@ -11,21 +11,12 @@ import { DragTypes } from "../CommonTypes";
 export const Tile = (props: {tileDef: TileDef, hideSelection: boolean, displayTileId: boolean}) => {
     const dispatch = useDispatch()
     const tileUnderEdit = useSelector((state: TilesetState) => state.tileSelectedId)
-    const textures = useSelector((state: TilesetState) => state.textures)
     const [, drag] = useDrag(() => ({
         type: DragTypes.Tile,
         item: props.tileDef,
     }))
 
-    
-    let selectedClass = tileUnderEdit === props.tileDef.tileId && !props.hideSelection ? SELECTION_STYLE : ''
 
-    const staticTexture = textures[props.tileDef.textures[0].sheetId]
-    const backgroundCss = props.tileDef.textures.length == 0 ? {} : generateBackgroundStyleForTile(props.tileDef.textures[0], staticTexture)
-    const isAnimated = props.tileDef.tileType === "ANIMATED"
-    const textureElement = isAnimated
-        ? <AnimatedTexture textures={props.tileDef.textures} className={selectedClass} />
-        : <div style={backgroundCss} className={"w-[16px] h-[16px] " + selectedClass}/>
     return (
         <div ref={drag} className={'inline-block m-2 cursor-pointer'} onClick={() => {
             if (tileUnderEdit === props.tileDef.tileId) {
@@ -43,31 +34,20 @@ export const Tile = (props: {tileDef: TileDef, hideSelection: boolean, displayTi
 }
 
 export const TileTexture = (props: {tileDef: TileDef, hideSelection: boolean}) => {
-    const dispatch = useDispatch()
     const tileUnderEdit = useSelector((state: TilesetState) => state.tileSelectedId)
     const textures = useSelector((state: TilesetState) => state.textures)
-    const [, drag] = useDrag(() => ({
-        type: DragTypes.Tile,
-        item: props.tileDef,
-    }))
 
     
     let selectedClass = tileUnderEdit === props.tileDef.tileId && !props.hideSelection ? SELECTION_STYLE : ''
 
     const staticTexture = textures[props.tileDef.textures[0].sheetId]
-    const backgroundCss = props.tileDef.textures.length == 0 ? {} : generateBackgroundStyleForTile(props.tileDef.textures[0], staticTexture)
+    const backgroundCss = props.tileDef.textures.length == 0 ? {} : generateBackgroundStyleForTile(props.tileDef.textures[Math.floor(Math.random()*props.tileDef.textures.length)], staticTexture)
     const isAnimated = props.tileDef.tileType === "ANIMATED"
     const textureElement = isAnimated
         ? <AnimatedTexture textures={props.tileDef.textures} className={selectedClass} />
-        : <div style={backgroundCss} className={"w-[16px] h-[16px]" + selectedClass}/>
+        : <div style={backgroundCss} className={"w-[16px] h-[16px] " + selectedClass}/>
     return (
-        <div ref={drag} onClick={() => {
-            if (tileUnderEdit === props.tileDef.tileId) {
-                dispatch(setTileForEdit(undefined))
-            } else {
-                dispatch(setTileForEdit(props.tileDef))
-            }
-        }} className="inline-block">
+        <div className="inline-block">
                 {textureElement}
         </div>
     )
