@@ -11,7 +11,7 @@ import {TileEditor} from "./components/TileEditor";
 import {ActionBar} from "./components/ActionBar";
 import { WaveFunctionPreview } from './components/WaveFunctionPreview';
 
-const GlobalDrop = (props: { children: JSX.Element }) => {
+const GlobalDrop = (props: { children: JSX.Element | JSX.Element[] }) => {
     const dispatch = useDispatch()
     const [, drop] = useDrop(
         () => ({
@@ -52,6 +52,7 @@ function App() {
                         </div>
                         <TileEditor />
                     </div>
+                    <canvas id="rgb" className='w-0 h-0 m-0 p-0' width="2000" height="2000"  />
                 </GlobalDrop>
             </DndProvider>
         </Provider>

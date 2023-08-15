@@ -8,9 +8,11 @@ import {
     faLayerGroup,
     IconDefinition,
     faTrash,
-    faCircleNodes
+    faCircleNodes,
+    faAmbulance
 } from '@fortawesome/free-solid-svg-icons'
-import { TileDef, TilePlacementConstraint } from "../model/TileDef";
+import { SheetTexturePosition, TileDef, TilePlacementConstraint } from "../model/TileDef";
+import { compareTextureBorders, getRgb, getTilePixelBorders } from "../utils/RgbComparison";
 
 
 
@@ -85,11 +87,82 @@ export const ActionBar = (props: {className: string}) => {
 
     }
 
+    const magic = async () => {
+        const selected = state.selectedTextures
+        const borders = await getTilePixelBorders(state.textures, selected)
+
+
+        // fine tiles that share alternative textures
+        const tilesWithSameTextures: SheetTexturePosition[][] = []
+        const texturestToSkip = new Set<number>()
+        for (const aIdx in borders) {
+            if (texturestToSkip.has(Number(aIdx))) continue
+            if (!(aIdx in tilesWithSameTextures)) {
+                tilesWithSameTextures[aIdx] = [selected[aIdx]]
+            }
+
+            for (const bIdx in borders.slice(Number(aIdx)+1)) {
+                const offsetBIdx = Number(aIdx)+Number(bIdx)+1
+                const a = borders[aIdx]
+                const b = borders[offsetBIdx]
+                const compare = compareTextureBorders(a, b)
+                console.log(compare)
+
+                //if (compare.bottom && compare.top && compare.left && compare.right) {
+                //    tilesWithSameTextures[aIdx].push(selected[offsetBIdx])  
+                //    texturestToSkip.add(offsetBIdx)
+                //}
+            }
+        }
+
+        let tiles = 0
+        let tileIds: string[] = Array(tilesWithSameTextures.length)
+        for (const tIdx in tilesWithSameTextures) {
+            const textures = tilesWithSameTextures[tIdx]
+            const id = (state.nextTileId+tiles++).toString()
+            dispatch(addTileDef({
+                tileId: id,
+                name: id,
+                tileType: "STATIC",
+                textures: textures
+            }))
+            tileIds[tIdx] = id
+        }
+
+        for (const aIdx in tilesWithSameTextures) {
+            for (const bIdx in tilesWithSameTextures) {
+                const compare = compareTextureBorders(borders[aIdx], borders[bIdx])
+                console.log(tileIds[aIdx], tileIds[bIdx], compare)
+                if (compare.right) {
+                    dispatch(addConstraint({
+                        sourceTileId: tileIds[aIdx],
+                        constraintTileId: tileIds[bIdx],
+                        relativeX: 1,
+                        relativeY: 0,
+                        relativeLayer: 0
+                    }))
+                }
+
+                if (compare.top) {
+                    dispatch(addConstraint({
+                        sourceTileId: tileIds[aIdx],
+                        constraintTileId: tileIds[bIdx],
+                        relativeX: 0,
+                        relativeY: 1,
+                        relativeLayer: 0
+                    }))
+                }
+            }
+        }
+
+    }
+
     return (
         <div className={props.className}>
             <IoButton onClick={() => download(state)} icon={faDownload} tooltip="Export Json" />
             <ActionButton onClick={() => addTileWithTextures()} icon={faLayerGroup} tooltip="Add selected textures as one tile" />
             <ActionButton onClick={() => addTilesWithContraints()} icon={faCircleNodes} tooltip="Add all textures as tiles constrainted relative to the texture position" />
+            <ActionButton onClick={() => magic()} icon={faAmbulance} tooltip="magic constraints" />
             <DangerButton onClick={() => dispatch(clearTiles())} icon={faEraser} tooltip="Remove all tiles" />
             <DangerButton onClick={() => dispatch(reset())} icon={faTrash} tooltip="Reset the project" />
         </div>
